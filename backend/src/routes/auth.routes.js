@@ -5,10 +5,22 @@ const {
   loginController,
 } = require("../controllers/auth.controller");
 
+const authMiddleware = require("../middlewares/auth.middleware");
+
 const router = express.Router();
 
 router.post("/register", registerController);
 
-router.post("/login",loginController);
+router.post("/login", loginController);
+
+// Temporary implementation: returning basic response.
+// This will be moved to a dedicated user route/controller
+// where full user profile details will be handled.
+
+router.get("/profile", authMiddleware, (req, res) => {
+  res.json({
+    message: "This is the profile page",
+  });
+});
 
 module.exports = router;
