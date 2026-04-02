@@ -4,6 +4,7 @@ const {
   registerController,
   loginController,
   logoutController,
+  verifyController,
 } = require("../controllers/auth.controller");
 
 const authMiddleware = require("../middlewares/auth.middleware");
@@ -15,6 +16,8 @@ router.post("/register", registerController);
 router.post("/login", loginController);
 
 router.post("/logout", logoutController);
+
+router.get("/verify-email", verifyController);
 
 // Temporary implementation: returning basic response.
 // This will be moved to a dedicated user route/controller
