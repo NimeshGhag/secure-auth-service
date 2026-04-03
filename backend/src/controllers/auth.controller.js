@@ -106,6 +106,82 @@ const verifyController = async (req, res) => {
   }
 };
 
+const resendVerifyController = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      message: "Email is required",
+    });
+  }
+
+  try {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+      });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    if (user.isVerified) {
+      return res.status(200).json({
+        message: "Email is already verified, You can login ",
+      });
+    }
+
+    const timeStamp = user.lastVerificationEmailSentAt;
+    if (timeStamp) {
+      const currentTime = new Date();
+      const timeDiff = (currentTime - timeStamp) / 1000;
+
+      if (timeDiff < 60) {
+        return res.status(429).json({
+          message: "Please wait 60 seconds before requesting another verification email",
+        });
+      }
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.EMAIL_TOKEN_SECRET, {
+      expiresIn: "10m",
+    });
+
+    const verificationLink = `${process.env.BASE_URL}/api/auth/verify-email?token=${token}`;
+    try {
+      await sendEmail(
+        user.email,
+        "Email Verification",
+        `Please verify your email by clicking the following link: ${verificationLink}`,
+        `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
+      );
+
+      user.lastVerificationEmailSentAt = new Date();
+      await user.save();
+
+      return res.status(200).json({
+        message: "Verification email resent successfully",
+      });
+    } catch (error) {
+      console.error("Error sending email:", error);
+
+      return res.status(200).json({
+        message: "Failed to send verification email",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 const loginController = async (req, res) => {
   const { email, password } = req.body;
 
@@ -177,4 +253,5 @@ module.exports = {
   loginController,
   logoutController,
   verifyController,
+  resendVerifyController,
 };
