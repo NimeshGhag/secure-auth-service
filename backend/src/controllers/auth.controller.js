@@ -144,7 +144,8 @@ const resendVerifyController = async (req, res) => {
 
       if (timeDiff < 60) {
         return res.status(429).json({
-          message: "Please wait 60 seconds before requesting another verification email",
+          message:
+            "Please wait 60 seconds before requesting another verification email",
         });
       }
     }
@@ -248,10 +249,122 @@ const logoutController = (req, res) => {
   });
 };
 
+const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return res.status(400).json({ message: "email is required" });
+
+  try {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+      });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (user) {
+      const forgotToken = jwt.sign(
+        { id: user._id },
+        process.env.FORGOT_TOKEN_SECRET,
+        {
+          expiresIn: "10m",
+        },
+      );
+
+      const restLink = `${process.env.BASE_URL}/api/auth/reset-password?token=${forgotToken}`;
+
+      try {
+        await sendEmail(
+          user.email,
+          "Reset password",
+          `Please reset your password by clicking the following link: ${restLink}`,
+          `<p>Please reset your password by clicking the following link: <a href="${restLink}">Reset Password</a></p>`,
+        );
+      } catch (error) {
+        console.error("Error sending email:", error);
+        return res.status(200).json({
+          message:
+            "If the email is registered, a password reset link has been sent",
+        });
+      }
+    }
+
+    return res.status(200).json({
+      message:
+        "If the email is registered, a password reset link has been sent",
+    });
+  } catch (error) {
+    console.error("Error in forgot password controller:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const resetPasswordController = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({
+      message: "Token and new password are required",
+    });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({
+      message: "Password must be at least 6 characters long",
+    });
+  }
+
+  try {
+    const decoded = await jwt.verify(token, process.env.FORGOT_TOKEN_SECRET);
+
+    if (!decoded.id) {
+      return res.status(400).json({
+        message: "Invalid token",
+      });
+    }
+
+    const user = await userModel.findById(decoded.id).select("+password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const samePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (samePassword) {
+      return res.status(400).json({
+        message: "New password cannot be the same as the old password",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successful. Please login again.",
+    });
+  } catch (error) {
+    console.error("Error in reset password controller:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
   logoutController,
   verifyController,
   resendVerifyController,
+  forgotPasswordController,
+  resetPasswordController,
 };

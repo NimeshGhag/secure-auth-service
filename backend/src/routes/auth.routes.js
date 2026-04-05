@@ -6,6 +6,8 @@ const {
   logoutController,
   verifyController,
   resendVerifyController,
+  forgotPasswordController,
+  resetPasswordController,
 } = require("../controllers/auth.controller");
 
 const authMiddleware = require("../middlewares/auth.middleware");
@@ -21,6 +23,12 @@ router.post("/logout", logoutController);
 router.get("/verify-email", verifyController);
 
 router.post("/resend-verification", resendVerifyController);
+
+router.post("/forgot-password",forgotPasswordController);
+
+router.post ("/reset-password", resetPasswordController);
+
+
 
 // Temporary implementation: returning basic response.
 // This will be moved to a dedicated user route/controller
