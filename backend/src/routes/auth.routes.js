@@ -8,6 +8,7 @@ const {
   resendVerifyController,
   forgotPasswordController,
   resetPasswordController,
+  googleAuthController,
 } = require("../controllers/auth.controller");
 
 const authMiddleware = require("../middlewares/auth.middleware");
@@ -27,6 +28,8 @@ router.post("/resend-verification", resendVerifyController);
 router.post("/forgot-password",forgotPasswordController);
 
 router.post ("/reset-password", resetPasswordController);
+
+router.post("/google", googleAuthController); 
 
 
 
