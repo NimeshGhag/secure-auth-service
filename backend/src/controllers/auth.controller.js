@@ -2,6 +2,8 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { sendEmail } = require("../services/email.service");
+const { verifyGoogleToken } = require("../services/googleAuth.service");
+const { sendTokenResponse } = require("../utils/authLogin.helper");
 
 const registerController = async (req, res) => {
   const { name, email, password } = req.body;
@@ -212,25 +214,8 @@ const loginController = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "none",
-      maxAge: 3600000,
-      secure: process.env.NODE_ENV === "production",
-    });
-
-    return res.status(200).json({
-      message: "Login successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-    });
+   
+    sendTokenResponse(res, user);
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
@@ -359,6 +344,58 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+const googleAuthController = async (req, res) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(400).json({
+      message: "Google ID token is required",
+    });
+  }
+
+  try {
+    const googleUser = await verifyGoogleToken(idToken);
+
+    if (!googleUser) {
+      return res.status(400).json({
+        message: "Invalid Google user",
+      });
+    }
+    const { email, name, providerId } = googleUser;
+
+    const user = await userModel.findOne({ email });
+
+    if (user) {
+      if (!user.providerId) {
+        user.providerId = providerId;
+        user.isVerified = true;
+        await user.save();
+      }
+
+     
+
+
+      sendTokenResponse(res, user);
+    } else {
+      const newUser = await userModel.create({
+        name,
+        email,
+        provider: "google",
+        providerId,
+        isVerified: true,
+      });
+
+    
+      sendTokenResponse(res, newUser);
+    }
+  } catch (error) {
+    console.error("Error in Google auth controller:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
@@ -367,4 +404,5 @@ module.exports = {
   resendVerifyController,
   forgotPasswordController,
   resetPasswordController,
+  googleAuthController,
 };
