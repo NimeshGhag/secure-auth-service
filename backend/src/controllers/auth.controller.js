@@ -214,27 +214,8 @@ const loginController = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "none",
-      maxAge: 3600000,
-      secure: process.env.NODE_ENV === "production",
-    });
-
-    return res.status(200).json({
-      message: "Login successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-    });
-
-    // sendTokenResponse(res, user);
+   
+    sendTokenResponse(res, user);
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
@@ -391,27 +372,10 @@ const googleAuthController = async (req, res) => {
         await user.save();
       }
 
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+     
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "none",
-        maxAge: 3600000,
-        secure: process.env.NODE_ENV === "production",
-      });
 
-      return res.status(200).json({
-        message: "Login successful",
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        },
-      });
-
-      // sendTokenResponse(res, user);
+      sendTokenResponse(res, user);
     } else {
       const newUser = await userModel.create({
         name,
@@ -421,26 +385,8 @@ const googleAuthController = async (req, res) => {
         isVerified: true,
       });
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "none",
-        maxAge: 3600000,
-        secure: process.env.NODE_ENV === "production",
-      });
-
-      return res.status(200).json({
-        message: "Login successful",
-        user: {
-          id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-        },
-      });
-      // sendTokenResponse(res, newUser);
+    
+      sendTokenResponse(res, newUser);
     }
   } catch (error) {
     console.error("Error in Google auth controller:", error);
