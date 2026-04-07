@@ -1,10 +1,31 @@
 // utils/authHelper.js
 const jwt = require("jsonwebtoken");
+const refreshTokenModel = require("../models/refreshToken.model");
 
-const sendTokenResponse = (res, user) => {
+const sendTokenResponse = async (res, user, message = "Login successful") => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
+
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "7d",
+    },
+  );
+
+  await refreshTokenModel.findOneAndUpdate(
+    { user: user._id },
+    { token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 3600000) },
+    { upsert: true, returnDocument: "after" },
+  );
+
+  // const newRefreshToken = await refreshTokenModel.create({
+  //   user: user._id,
+  //   token: refreshToken,
+  //   expiresAt: new Date(Date.now() + 7 * 24 * 3600000),
+  // });
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -13,8 +34,15 @@ const sendTokenResponse = (res, user) => {
     secure: process.env.NODE_ENV === "production",
   });
 
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 3600000,
+    secure: process.env.NODE_ENV === "production",
+  });
+
   res.status(200).json({
-    message: "Login successful",
+    message,
     user: {
       id: user._id,
       name: user.name,

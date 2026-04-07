@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { sendEmail } = require("../services/email.service");
 const { verifyGoogleToken } = require("../services/googleAuth.service");
 const { sendTokenResponse } = require("../utils/authLogin.helper");
+const refreshTokenModel = require("../models/refreshToken.model");
 
 const registerController = async (req, res) => {
   const { name, email, password } = req.body;
@@ -214,7 +215,6 @@ const loginController = async (req, res) => {
       });
     }
 
-   
     sendTokenResponse(res, user);
   } catch (error) {
     return res.status(500).json({
@@ -372,9 +372,6 @@ const googleAuthController = async (req, res) => {
         await user.save();
       }
 
-     
-
-
       sendTokenResponse(res, user);
     } else {
       const newUser = await userModel.create({
@@ -385,13 +382,53 @@ const googleAuthController = async (req, res) => {
         isVerified: true,
       });
 
-    
       sendTokenResponse(res, newUser);
     }
   } catch (error) {
     console.error("Error in Google auth controller:", error);
     return res.status(500).json({
       message: "Internal server error",
+    });
+  }
+};
+
+const refreshTokenController = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: "Refresh token is required",
+    });
+  }
+
+  try {
+    const decoded = await jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+    );
+    const refreshTokenInDb = await refreshTokenModel.findOne({
+      token: refreshToken,
+    });
+
+    if (!refreshTokenInDb) {
+      return res.status(401).json({
+        message: "Invalid refresh token",
+      });
+    }
+
+    const user = await userModel.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found ",
+      });
+    }
+
+    sendTokenResponse(res, user, "Token refreshed successfully");
+  } catch (error) {
+    console.error("Error in refresh token controller:", error);
+    return res.status(401).json({
+      message: "Invalid or expired refresh token",
     });
   }
 };
@@ -405,4 +442,5 @@ module.exports = {
   forgotPasswordController,
   resetPasswordController,
   googleAuthController,
+  refreshTokenController,
 };

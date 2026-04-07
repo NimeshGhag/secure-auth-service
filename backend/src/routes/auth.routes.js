@@ -9,6 +9,7 @@ const {
   forgotPasswordController,
   resetPasswordController,
   googleAuthController,
+  refreshTokenController,
 } = require("../controllers/auth.controller");
 
 const authMiddleware = require("../middlewares/auth.middleware");
@@ -25,13 +26,13 @@ router.get("/verify-email", verifyController);
 
 router.post("/resend-verification", resendVerifyController);
 
-router.post("/forgot-password",forgotPasswordController);
+router.post("/forgot-password", forgotPasswordController);
 
-router.post ("/reset-password", resetPasswordController);
+router.post("/reset-password", resetPasswordController);
 
-router.post("/google", googleAuthController); 
+router.post("/google", googleAuthController);
 
-
+router.post("/refresh-token", refreshTokenController);
 
 // Temporary implementation: returning basic response.
 // This will be moved to a dedicated user route/controller
