@@ -223,12 +223,21 @@ const loginController = async (req, res) => {
   }
 };
 
-const logoutController = (req, res) => {
+const logoutController = async(req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "none",
     secure: process.env.NODE_ENV === "production",
   });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  await refreshTokenModel.findOneAndDelete({ token: req.cookies.refreshToken });
+
+
   return res.status(200).json({
     message: "Logout successful",
   });
