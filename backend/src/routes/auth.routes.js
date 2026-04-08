@@ -14,23 +14,28 @@ const {
 
 const authMiddleware = require("../middlewares/auth.middleware");
 
+const {
+  apiLimiter,
+  authLimiter,
+} = require("../middlewares/rateLimiter.middleware");
+
 const router = express.Router();
 
-router.post("/register", registerController);
+router.post("/register", apiLimiter, registerController);
 
-router.post("/login", loginController);
+router.post("/login", authLimiter, loginController);
 
 router.post("/logout", logoutController);
 
-router.get("/verify-email", verifyController);
+router.get("/verify-email", authLimiter, verifyController);
 
-router.post("/resend-verification", resendVerifyController);
+router.post("/resend-verification", authLimiter, resendVerifyController);
 
-router.post("/forgot-password", forgotPasswordController);
+router.post("/forgot-password", authLimiter, forgotPasswordController);
 
-router.post("/reset-password", resetPasswordController);
+router.post("/reset-password", authLimiter, resetPasswordController);
 
-router.post("/google", googleAuthController);
+router.post("/google", authLimiter, googleAuthController);
 
 router.post("/refresh-token", refreshTokenController);
 
@@ -38,7 +43,7 @@ router.post("/refresh-token", refreshTokenController);
 // This will be moved to a dedicated user route/controller
 // where full user profile details will be handled.
 
-router.get("/profile", authMiddleware, (req, res) => {
+router.get("/profile", authMiddleware, apiLimiter, (req, res) => {
   res.json({
     message: "This is the profile page",
   });
