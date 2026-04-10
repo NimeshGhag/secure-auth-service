@@ -99,6 +99,8 @@ Create a `.env` in `/backend` with the following keys (do not commit secrets):
 - Refresh cookies are `HttpOnly` (and should be `Secure` in production) to mitigate XSS.
 - Rate limiting protects login and recovery endpoints from brute-force attempts.
 - Google ID tokens are verified server-side using `google-auth-library` to prevent token spoofing.
+- Helmet for secure HTTP headers
+- CORS configured with credentials support for cookie-based auth 
 
 ## Future improvements
 
