@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { sendEmail } = require("../services/email.service");
 const { verifyGoogleToken } = require("../services/googleAuth.service");
 const { sendTokenResponse } = require("../utils/authLogin.helper");
+const cookieOptions = require("../utils/cookieOptions").cookieOptions;
 const refreshTokenModel = require("../models/refreshToken.model");
 
 const registerController = async (req, res) => {
@@ -223,20 +224,15 @@ const loginController = async (req, res) => {
   }
 };
 
-const logoutController = async(req, res) => {
+const logoutController = async (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
+    ...cookieOptions,
   });
   res.clearCookie("refreshToken", {
-    httpOnly: true,
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
+    ...cookieOptions,
   });
 
   await refreshTokenModel.findOneAndDelete({ token: req.cookies.refreshToken });
-
 
   return res.status(200).json({
     message: "Logout successful",
