@@ -226,10 +226,10 @@ const loginController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   res.clearCookie("token", {
-    ...cookieOptions,
+    ...cookieOptions(),
   });
   res.clearCookie("refreshToken", {
-    ...cookieOptions,
+    ...cookieOptions(),
   });
 
   await refreshTokenModel.findOneAndDelete({ token: req.cookies.refreshToken });

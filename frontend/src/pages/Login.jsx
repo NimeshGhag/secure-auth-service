@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "../api/axios.config";
+import { authContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [
+    user,
+    setUser,
+    isAuthenticated,
+    setIsAuthenticated,
+    loading,
+    setLoading,
+  ] = useContext(authContext);
 
-
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -15,10 +25,16 @@ const Login = () => {
           email: form.email,
           password: form.password,
         },
+
         {
           withCredentials: true,
         },
       );
+
+      const userData = response.data;
+      setUser(userData);
+      setIsAuthenticated(true);
+      navigate("/profile")
 
       console.log("api working", response);
     } catch (error) {
