@@ -1,7 +1,7 @@
 // utils/authHelper.js
 const jwt = require("jsonwebtoken");
 const refreshTokenModel = require("../models/refreshToken.model");
-const cookieOptions = require("./cookieOptions");
+const { cookieOptions } = require("./cookieOptions");
 
 const sendTokenResponse = async (res, user, message = "Login successful") => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -36,12 +36,12 @@ const sendTokenResponse = async (res, user, message = "Login successful") => {
   // };
 
   res.cookie("token", token, {
-    ...cookieOptions,
+    ...cookieOptions(),
     maxAge: 3600000,
   });
 
   res.cookie("refreshToken", refreshToken, {
-    ...cookieOptions,
+    ...cookieOptions(),
     maxAge: 7 * 24 * 3600000,
   });
 

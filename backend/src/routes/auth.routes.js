@@ -44,8 +44,13 @@ router.post("/refresh-token", refreshTokenController);
 // where full user profile details will be handled.
 
 router.get("/profile", authMiddleware, apiLimiter, (req, res) => {
-  res.json({
+  return res.json({
     message: "This is the profile page",
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+    },
   });
 });
 
