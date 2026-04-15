@@ -3,6 +3,7 @@ import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PublicRoute from "../components/PublicRoute";
+import Register from "../pages/Register";
 
 const MainRoutes = () => {
   return (
@@ -24,6 +25,16 @@ const MainRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+
       </Routes>
     </>
   );
