@@ -2,9 +2,18 @@ import { useState, useContext } from "react";
 import axios from "../api/axios.config";
 import { authContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [Submitting, setSubmitting] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setError,
+  } = useForm();
+
   const [
     user,
     setUser,
@@ -16,14 +25,13 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function loginHandler(data) {
     try {
       const response = await axios.post(
         "/auth/login",
         {
-          email: form.email,
-          password: form.password,
+          email: data.email,
+          password: data.password,
         },
 
         {
@@ -32,31 +40,41 @@ const Login = () => {
       );
 
       const userData = response.data;
+
+      setSubmitting(true);
       setUser(userData);
       setIsAuthenticated(true);
-      navigate("/profile")
-
-      console.log("api working", response);
+      navigate("/profile");
+      reset();
     } catch (error) {
-      console.error("Error occurred:", error);
+      setError("root", { message: error.response.data.message });
+      console.error("Login error:", error);
+    } finally {
+      setSubmitting(false);
     }
   }
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(loginHandler)}>
         <input
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
           type="text"
           placeholder="email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
+        {errors.email && <p>Email is required</p>}
+        {errors.email?.type === "pattern" && <p>Please enter a valid email</p>}
         <input
+          {...register("password", { required: true })}
           type="password"
           placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
-        <button type="submit">Login</button>
+        {errors.password && <p>password is required</p>}
+
+        {errors.root && <p>{errors.root.message}</p>}
+
+        <button type="submit" disabled={Submitting}>
+          {Submitting ? "Logging in..." : "Login"}
+        </button>
       </form>
     </>
   );
