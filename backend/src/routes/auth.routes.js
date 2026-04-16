@@ -33,7 +33,7 @@ router.post("/resend-verification", authLimiter, resendVerifyController);
 
 router.post("/forgot-password", authLimiter, forgotPasswordController);
 
-router.post("/reset-password", authLimiter, resetPasswordController);
+router.post("/reset-password/:token", authLimiter, resetPasswordController);
 
 router.post("/google", authLimiter, googleAuthController);
 

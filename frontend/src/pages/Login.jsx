@@ -96,7 +96,7 @@ const Login = () => {
       });
     }, 1000);
 
-    return ()=> clearInterval(timer)
+    return () => clearInterval(timer);
   }, [cooldown]);
 
   return (
@@ -126,6 +126,10 @@ const Login = () => {
             {cooldown ? `Resend in ${cooldown}` : "Resend Verification Email"}
           </button>
         )}
+
+        <small onClick={() => navigate("/forgot-password")}>
+          forgot password
+        </small>
 
         <button type="submit" disabled={Submitting}>
           {Submitting ? "Logging in..." : "Login"}
