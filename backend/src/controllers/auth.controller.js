@@ -264,7 +264,7 @@ const forgotPasswordController = async (req, res) => {
         },
       );
 
-      const restLink = `${process.env.BASE_URL}/api/auth/reset-password?token=${forgotToken}`;
+      const restLink = `${process.env.CLIENT_URL}/reset-password?token=${forgotToken}`;
 
       try {
         await sendEmail(
@@ -295,7 +295,8 @@ const forgotPasswordController = async (req, res) => {
 };
 
 const resetPasswordController = async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { token } = req.params;
+  const { newPassword } = req.body;
 
   if (!token || !newPassword) {
     return res.status(400).json({
