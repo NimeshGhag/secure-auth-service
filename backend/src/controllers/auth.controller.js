@@ -172,6 +172,7 @@ const resendVerifyController = async (req, res) => {
 
       return res.status(200).json({
         message: "Verification email resent successfully",
+        cooldown: 60,
       });
     } catch (error) {
       console.error("Error sending email:", error);
