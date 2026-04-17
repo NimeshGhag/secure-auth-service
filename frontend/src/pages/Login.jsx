@@ -44,7 +44,6 @@ const Login = () => {
       );
 
       const userData = response.data.user;
-      console.log(userData);
 
       setUser(userData);
       setIsAuthenticated(true);
