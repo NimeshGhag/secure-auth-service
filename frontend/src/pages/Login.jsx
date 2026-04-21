@@ -3,6 +3,7 @@ import axios from "../api/axios.config";
 import { authContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [Submitting, setSubmitting] = useState(false);
@@ -134,6 +135,43 @@ const Login = () => {
           {Submitting ? "Logging in..." : "Login"}
         </button>
       </form>
+
+      <div></div>
+
+      <small>
+        Don't have an account
+        <span onClick={() => navigate("/register")}>Register</span>
+      </small>
+
+      <p>OR continue with Google</p>
+
+      <GoogleLogin
+        onSuccess={async (response) => {
+          try {
+            setSubmitting(true);
+            const res = await axios.post(
+              "/auth/google",
+              {
+                idToken: response.credential,
+              },
+              {
+                withCredentials: true,
+              },
+            );
+            setUser(res.data.user);
+            console.log(res.data);
+            setIsAuthenticated(true);
+            navigate("/profile");
+          } catch (error) {
+            setError({ message: error.res.data.message });
+          } finally {
+            setSubmitting(false);
+          }
+        }}
+        onError={() => {
+          console.log("Login Failed");
+        }}
+      />
     </>
   );
 };
