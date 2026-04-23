@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "../api/axios.config";
+import MyForm from "../components/ui/MyForm";
+import MyButton from "../components/ui/Button";
+import MyInput from "../components/ui/MyInput";
 
 const ResetPassword = () => {
   const [SearchParams] = useSearchParams();
@@ -35,35 +38,50 @@ const ResetPassword = () => {
     }
   };
 
-
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register("newPassword", { required: true })}
-          type="password"
-          placeholder="New Password"
-        />
-        {errors.password && <p>password is required</p>}
-        <input
-          {...register("confirmPassword", {
-            required: "Confirm your password",
-            validate: (value, formValues) => {
-              value === formValues.newPassword || "Password do not match";
-            },
-          })}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
+    <div className="auth-layout-container h-screen w-screen  flex justify-center items-center bg-linear-to-br from-purple-400/50 via-orange-300/20 to- to-60%  ">
+      <div className="login-form-container shadow-xl w-full max-w-80 md:max-w-100 m-4 p-4 rounded-2xl grid place-content-center place-items-center leading-6 backdrop-blur-3xl ">
+        {/*  */}
 
-        {errors.root && <p>{errors.root.message}</p>}
+        <h1 className="text-2xl md:text-4xl font-thin p-5 ">Update password</h1>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Reseting..." : "Reset password"}
-        </button>
-      </form>
-    </>
+        <p className="text-md md:text-xl text-center  text-gray-700  font-thin p-5 ">
+          New password shouldn't match old password
+        </p>
+        {/*  */}
+
+        <MyForm onSubmit={handleSubmit(onSubmit)}>
+          <MyInput
+            {...register("newPassword", { required: true })}
+            type="password"
+            placeholder="New Password"
+          />
+          {errors.password && (
+            <p className="text-red-600 text-sm">password is required</p>
+          )}
+        
+
+          {errors.root && (
+            <p className="text-red-600 text-sm">{errors.root.message}</p>
+          )}
+
+          <MyButton type="submit" disabled={loading}>
+            {loading ? "Reseting..." : "Reset password"}
+          </MyButton>
+        </MyForm>
+
+        {/*  */}
+
+        <div className="p-2 md:p-3 md:mb-2 ">
+          <span
+            className="text-center text-sm text-blue-500 hover:underline cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            Sign in
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
 
