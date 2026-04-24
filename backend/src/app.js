@@ -8,8 +8,7 @@ const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
-app.use(helmet());
-
+// cors
 const allowedOrigins = [
   "http://localhost:5173",
   "https://secure-auth-service-hfhg.onrender.com",
@@ -27,6 +26,7 @@ app.use(
   }),
 );
 
+// helmet
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -47,7 +47,7 @@ app.use(
       },
     },
   }),
-);
+)
 
 app.use(express.json());
 app.use(cokieParser());
@@ -56,7 +56,7 @@ app.use("/api/auth", authRoutes);
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get((req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 
