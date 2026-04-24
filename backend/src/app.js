@@ -37,6 +37,7 @@ app.use(
           "'self'",
           "https://accounts.google.com",
           "https://apis.google.com",
+          "https://*.google.com",
         ],
 
         connectSrc: [
