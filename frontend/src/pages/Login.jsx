@@ -115,6 +115,7 @@ const Login = () => {
           theme="filled_blue"
           shape="pill"
           size="large"
+          text="signin_with"
           width={100}
           onSuccess={async (response) => {
             try {

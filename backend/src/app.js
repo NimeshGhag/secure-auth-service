@@ -39,7 +39,11 @@ app.use(
           "https://apis.google.com",
         ],
 
-        connectSrc: ["'self'", "https://accounts.google.com"],
+        connectSrc: [
+          "'self'",
+          "https://accounts.google.com",
+          "https://secure-auth-service-hfhg.onrender.com",
+        ],
 
         frameSrc: ["'self'", "https://accounts.google.com"],
 
