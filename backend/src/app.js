@@ -16,6 +16,38 @@ app.use(
   }),
 );
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+
+        scriptSrc: [
+          "'self'",
+          "https://accounts.google.com",
+          "https://apis.google.com"
+        ],
+
+        connectSrc: [
+          "'self'",
+          "https://accounts.google.com"
+        ],
+
+        frameSrc: [
+          "'self'",
+          "https://accounts.google.com"
+        ],
+
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://lh3.googleusercontent.com"
+        ],
+      },
+    },
+  })
+);
+
 app.use(express.json());
 app.use(cokieParser());
 
