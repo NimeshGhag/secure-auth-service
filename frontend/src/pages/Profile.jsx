@@ -40,7 +40,7 @@ const Profile = () => {
             className="back-btn text-2xl font-bold cursor-pointer"
             onClick={() => navigate(-1)}
           >
-            ←
+            &larr;
           </button>
           <p className="text-2xl font-normal">My Profile</p>
           <button

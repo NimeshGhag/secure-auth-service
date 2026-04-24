@@ -6,6 +6,7 @@ import PublicRoute from "../components/PublicRoute";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import PageNotFound from "../pages/PageNotFound";
 
 const MainRoutes = () => {
   return (
@@ -37,7 +38,7 @@ const MainRoutes = () => {
           }
         />
 
-         <Route
+        <Route
           path="/forgot-password"
           element={
             <PublicRoute>
@@ -54,6 +55,7 @@ const MainRoutes = () => {
           }
         />
 
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );
