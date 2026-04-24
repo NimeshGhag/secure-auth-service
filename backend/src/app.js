@@ -9,9 +9,20 @@ const authRoutes = require("./routes/auth.routes");
 const app = express();
 
 app.use(helmet());
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://secure-auth-service-hfhg.onrender.com",
+];
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
@@ -25,27 +36,17 @@ app.use(
         scriptSrc: [
           "'self'",
           "https://accounts.google.com",
-          "https://apis.google.com"
+          "https://apis.google.com",
         ],
 
-        connectSrc: [
-          "'self'",
-          "https://accounts.google.com"
-        ],
+        connectSrc: ["'self'", "https://accounts.google.com"],
 
-        frameSrc: [
-          "'self'",
-          "https://accounts.google.com"
-        ],
+        frameSrc: ["'self'", "https://accounts.google.com"],
 
-        imgSrc: [
-          "'self'",
-          "data:",
-          "https://lh3.googleusercontent.com"
-        ],
+        imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
       },
     },
-  })
+  }),
 );
 
 app.use(express.json());
