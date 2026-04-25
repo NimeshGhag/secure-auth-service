@@ -67,11 +67,13 @@ const Register = () => {
                   withCredentials: true,
                 },
               );
+              console.log("res", res.data);
               setUser(res.data.user);
               setIsAuthenticated(true);
               navigate("/profile");
             } catch (error) {
               setError({ message: error.res.data.message });
+              console.log(error.response?.data || error.message); // ✅ HERE
             } finally {
               setSubmitting(false);
             }

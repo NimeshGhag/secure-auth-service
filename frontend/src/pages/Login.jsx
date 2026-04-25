@@ -115,6 +115,7 @@ const Login = () => {
           theme="filled_blue"
           shape="pill"
           size="large"
+          text="signin_with"
           width={100}
           onSuccess={async (response) => {
             try {
@@ -137,7 +138,7 @@ const Login = () => {
               setSubmitting(false);
             }
           }}
-          onError={() => {
+          onError={(e) => {
             console.log("Login Failed");
           }}
         />

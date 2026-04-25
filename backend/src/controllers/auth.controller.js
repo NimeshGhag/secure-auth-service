@@ -379,7 +379,8 @@ const googleAuthController = async (req, res) => {
         await user.save();
       }
 
-      sendTokenResponse(res, user);
+      await sendTokenResponse(res, user);
+      // res.redirect("/profile");
     } else {
       const newUser = await userModel.create({
         name,
@@ -389,7 +390,8 @@ const googleAuthController = async (req, res) => {
         isVerified: true,
       });
 
-      sendTokenResponse(res, newUser);
+      await sendTokenResponse(res, newUser);
+      // res.redirect("/profile");
     }
   } catch (error) {
     console.error("Error in Google auth controller:", error);

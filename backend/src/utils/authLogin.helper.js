@@ -3,7 +3,11 @@ const jwt = require("jsonwebtoken");
 const refreshTokenModel = require("../models/refreshToken.model");
 const { cookieOptions } = require("./cookieOptions");
 
-const sendTokenResponse = async (res, user, message = "Login successful") => {
+const sendTokenResponse = async (
+  res,
+  user,
+  message = "Login successful",
+) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
@@ -44,7 +48,10 @@ const sendTokenResponse = async (res, user, message = "Login successful") => {
     ...cookieOptions(),
     maxAge: 7 * 24 * 3600000,
   });
-
+  
+  // if (redirect) {
+  //   return; // controller will handle redirect
+  // }
   res.status(200).json({
     message,
     user: {
