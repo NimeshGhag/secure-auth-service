@@ -29,6 +29,7 @@ app.use(
 // helmet
 app.use(
   helmet({
+    crossOriginOpenerPolicy: false,
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -49,6 +50,8 @@ app.use(
         frameSrc: ["'self'", "https://accounts.google.com"],
 
         imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
+        
+        styleSrc: ["'self'", "'unsafe-inline'"],
       },
     },
   }),
