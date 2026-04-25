@@ -135,11 +135,12 @@ const Login = () => {
               navigate("/profile");
             } catch (error) {
               setError({ message: error.res.data.message });
+              console.log(error.response?.data || error.message); // ✅ HERE
             } finally {
               setSubmitting(false);
             }
           }}
-          onError={() => {
+          onError={(e) => {
             console.log("Login Failed");
           }}
         />

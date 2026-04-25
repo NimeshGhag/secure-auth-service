@@ -50,7 +50,7 @@ app.use(
         frameSrc: ["'self'", "https://accounts.google.com"],
 
         imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
-        
+
         styleSrc: ["'self'", "'unsafe-inline'"],
       },
     },
@@ -64,7 +64,10 @@ app.use("/api/auth", authRoutes);
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get((req, res) => {
+app.get((req, res, next) => {
+  if (req.originalUrl.startsWith("/api")) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 

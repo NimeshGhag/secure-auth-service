@@ -1,4 +1,4 @@
-import axios from "../api/axios.config";
+import axios from "axios";
 import React, { useEffect } from "react";
 
 import { createContext, useState } from "react";
@@ -12,7 +12,7 @@ const AuthContext = (props) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("/auth/profile", {
+        const response = await axios.get("api/auth/profile", {
           withCredentials: true,
         });
         console.log("Auth check response:", response.data.user);
