@@ -67,6 +67,7 @@ const Register = () => {
                   withCredentials: true,
                 },
               );
+              console.log("res", res.data);
               setUser(res.data.user);
               setIsAuthenticated(true);
               navigate("/profile");
