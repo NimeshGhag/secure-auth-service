@@ -6,7 +6,6 @@ const { cookieOptions } = require("./cookieOptions");
 const sendTokenResponse = async (
   res,
   user,
-  redirect = false,
   message = "Login successful",
 ) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -50,9 +49,9 @@ const sendTokenResponse = async (
     maxAge: 7 * 24 * 3600000,
   });
   
-  if (redirect) {
-    return; // controller will handle redirect
-  }
+  // if (redirect) {
+  //   return; // controller will handle redirect
+  // }
   res.status(200).json({
     message,
     user: {
