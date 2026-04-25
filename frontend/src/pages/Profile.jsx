@@ -53,11 +53,7 @@ const Profile = () => {
 
         <div>
           <div className="profile-container w-20 aspect-square bg-amber-100 rounded-full">
-            <img
-              className="user-profile w-full aspect-square object-cover  rounded-full"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvts5aHBstDkR8PigS4RmZkbZy78zpZoSuOw&s"
-              alt=""
-            />
+            
           </div>
           <div className="user-info mt-2">
             <h1 className="capitalize text-2xl font-semibold">{user.name}</h1>
