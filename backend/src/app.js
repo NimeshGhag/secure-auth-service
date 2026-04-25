@@ -64,10 +64,7 @@ app.use("/api/auth", authRoutes);
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get((req, res, next) => {
-  if (req.originalUrl.startsWith("/api")) {
-    return next();
-  }
+app.get((req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 
