@@ -71,7 +71,7 @@ const Register = () => {
               setIsAuthenticated(true);
               navigate("/profile");
             } catch (error) {
-              setError({ message: error.response.data.message || error.message });
+              setError({ message: error.response?.data?.message || error.message });
 
             } finally {
               setSubmitting(false);
