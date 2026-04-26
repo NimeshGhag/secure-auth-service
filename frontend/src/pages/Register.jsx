@@ -29,8 +29,6 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const hasRun = useRef(false);
-
   async function registerHandler(data) {
     try {
       const response = await axios.post("/auth/register", {
