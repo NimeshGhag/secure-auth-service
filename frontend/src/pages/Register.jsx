@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "../api/axios.config";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,8 @@ const Register = () => {
   } = useForm();
 
   const navigate = useNavigate();
+
+  const hasRun = useRef(false);
 
   async function registerHandler(data) {
     try {
@@ -53,9 +55,14 @@ const Register = () => {
           theme="filled_blue"
           shape="pill"
           size="large"
-          text="signup_with"
+          text="signin_with"
           width="100%"
           onSuccess={async (response) => {
+            if (hasRun.current) return; // 🚨 STOP duplicate
+            hasRun.current = true;
+
+            console.log("Google onSuccess fired");
+
             try {
               setSubmitting(true);
               const res = await axios.post(
@@ -71,8 +78,10 @@ const Register = () => {
               setIsAuthenticated(true);
               navigate("/profile");
             } catch (error) {
-              setError({ message: error.response?.data?.message || error.message });
-
+              console.log("ERROR FULL:", error);
+              setError({
+                message: error.response?.data?.message || error.message,
+              });
             } finally {
               setSubmitting(false);
             }
