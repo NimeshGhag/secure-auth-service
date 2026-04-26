@@ -15,7 +15,6 @@ const AuthContext = (props) => {
         const response = await axios.get("/auth/profile", {
           withCredentials: true,
         });
-        console.log("Auth check response:", response.data.user);
         setUser(response.data.user);
         setIsAuthenticated(true);
       } catch (error) {
