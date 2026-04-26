@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useState } from "react";
 import axios from "../api/axios.config";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -6,6 +6,7 @@ import MyButton from "../components/ui/Button";
 import MyForm from "./../components/ui/MyForm";
 import MyInput from "../components/ui/MyInput";
 import { GoogleLogin } from "@react-oauth/google";
+import { authContext } from "../context/AuthContext";
 
 const Register = () => {
   const [Submitting, setSubmitting] = useState(false);
@@ -16,6 +17,15 @@ const Register = () => {
     formState: { errors },
     setError,
   } = useForm();
+
+  const [
+      user,
+      setUser,
+      isAuthenticated,
+      setIsAuthenticated,
+      loading,
+      setLoading,
+    ] = useContext(authContext);
 
   const navigate = useNavigate();
 
@@ -35,7 +45,6 @@ const Register = () => {
       reset();
     } catch (error) {
       setError("root", { message: error.response.data.message });
-      console.error("Register error:", error);
     } finally {
       setSubmitting(false);
     }
@@ -55,13 +64,9 @@ const Register = () => {
           theme="filled_blue"
           shape="pill"
           size="large"
-          text="signin_with"
+          text="signup_with"
           width="100%"
           onSuccess={async (response) => {
-            if (hasRun.current) return; // 🚨 STOP duplicate
-            hasRun.current = true;
-
-            console.log("Google onSuccess fired");
 
             try {
               setSubmitting(true);
@@ -78,16 +83,15 @@ const Register = () => {
               setIsAuthenticated(true);
               navigate("/profile");
             } catch (error) {
-              console.log("ERROR FULL:", error);
-              setError({
-                message: error.response?.data?.message || error.message,
+              setError("root",{
+                message: error.response?.data?.message || error.message || "Somthing went wrong",
               });
             } finally {
               setSubmitting(false);
             }
           }}
           onError={() => {
-            console.log("Login Failed");
+            console.log("Register Failed");
           }}
         />
         {/*  */}
