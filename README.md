@@ -1,10 +1,19 @@
-# Secure Authentication Service  (JWT + Refresh Token Rotation)
+# Secure Authentication Service (JWT + Refresh Token Rotation)
 
-A production-ready authentication system built with addvanced security features like JWT access tokens, refresh token rotation, Google OAuth integration, email verification, and rate limiting. The backend is implemented with Node.js, Express, MongoDB, and Mongoose, while the frontend is scaffolded with React and Vite.
+## 🌐 Live Demo
+👉 https://secure-auth-service-hfhg.onrender.com
+
+A production-ready authentication system demonstrating secure patterns: short-lived JWT access tokens, refresh token rotation, Google OAuth integration, email verification, and rate limiting. The backend is implemented with Node.js/Express and MongoDB, while the frontend is a fully integrated React + Vite application with protected routes, Google OAuth UI, and complete authentication flows.
 
 ## Project overview
 
-This repository contains a full-stack authentication system split into two folders: a Node.js/Express backend (MongoDB + Mongoose) and a React frontend scaffold. The backend implements JWT access tokens, refresh token rotation, Google OAuth ID-token verification, email verification, password reset flows, and rate limiting for sensitive auth routes.
+This repository contains a full-stack authentication system split into two folders: a Node.js/Express backend (`/backend`) and a React frontend (`/frontend`). The backend implements JWT access tokens, refresh-token rotation, Google OAuth ID-token verification, email verification and password reset flows, and rate limiting for sensitive auth routes.
+
+## 💡 Why this project?
+
+Authentication is the foundation of every application.
+Instead of building basic login systems repeatedly, this project focuses on creating a **reusable, production-ready authentication service** with real-world security practices like refresh token rotation, HTTP-only cookies, and OAuth integration.
+This project demonstrates how authentication works in real production environments — not just tutorials.
 
 ## Key features
 
@@ -20,11 +29,11 @@ This repository contains a full-stack authentication system split into two folde
 
 ## Tech stack
 
-- Backend: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens`
-- Frontend: React, Vite (scaffold)
-- Other: Google OAuth (google-auth-library), express-rate-limit, nodemailer
+- Backend: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens
+- Frontend: React, Vite, React Router, React Hook Form, Tailwind CSS, Axios
+- Other: Google OAuth, Nodemailer, express-rate-limit
 
-## Folder structure
+## Folder structure (high level)
 
 - `/backend` — Express server and API implementation
 	- `server.js` — app entry
@@ -32,41 +41,19 @@ This repository contains a full-stack authentication system split into two folde
 	- `src/routes/auth.routes.js` — auth endpoints
 	- `src/middlewares` — auth middleware, rate limiter
 	- `src/models` — `user.model.js`, `refreshToken.model.js`
-- `/frontend` — React app scaffold (development in progress)
+- `/frontend` — React app (Vite)
+	- `src/main.jsx` — app bootstrap
+	- `src/App.jsx` — app root
+	- `src/pages` — `Login`, `Register`, `Profile`, `ForgotPassword`, `ResetPassword`, `PageNotFound`
+	- `src/components` — UI components and `ProtectedRoute`, `PublicRoute`
+	- `src/context` — `AuthContext.jsx` for auth state
+	- `src/api/axios.config.js` — axios instance; uses `VITE_API_BASE_URL` env var
 
-## API overview (auth)
+## Frontend — Setup & run
 
-Primary endpoints (see `/backend/src/routes/auth.routes.js`):
+Prereqs: Node.js 18+, npm (or yarn).
 
-- `POST /api/auth/register` — create account (email verification begins)
-- `POST /api/auth/login` — credentials login (returns access token, sets refresh cookie)
-- `POST /api/auth/google` — login/register via Google ID token
-- `POST /api/auth/refresh-token` — rotate and return new access token
-- `POST /api/auth/logout` — clear refresh cookie and invalidate token
-- `GET /api/auth/verify-email` — verify account by token
-- `POST /api/auth/resend-verification` — resend verification email
-- `POST /api/auth/forgot-password` — request password reset email
-- `POST /api/auth/reset-password` — complete password reset with token
-- `GET /api/auth/profile` — example protected route (requires auth middleware)
-
-Notes: rate limiting (`authLimiter` / `apiLimiter`) is applied to sensitive endpoints (login, forgot/reset password, verification).
-
-## Setup
-
-Prerequisites: Node.js 18+, npm, a MongoDB instance, and a configured email provider (SMTP) for verification/reset emails.
-
-Backend (development):
-
-1. cd into the backend folder
-2. Install dependencies and run
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Frontend (development):
+Install and run locally:
 
 ```bash
 cd frontend
@@ -74,50 +61,100 @@ npm install
 npm run dev
 ```
 
-API base: by default the backend serves on the configured `PORT` (see env variables). The frontend is expected to call the API at your `CLIENT_URL` or proxied path depending on local setup.
+Useful scripts (from `/frontend/package.json`):
 
-## Environment variables
+- `npm run dev` — start Vite dev server
+- `npm run build` — produce production build
+- `npm run preview` — preview production build
+- `npm run lint` — run ESLint
 
-Create a `.env` in `/backend` with the following keys (do not commit secrets):
+Frontend config notes:
+
+- API base URL is read from `import.meta.env.VITE_API_BASE_URL` in `src/api/axios.config.js`.
+- Create a `.env` file in `/frontend` for local development with a variable like:
+
+```
+VITE_API_BASE_URL=http://localhost:4000
+```
+
+Set `VITE_API_BASE_URL` to your backend origin (do not include trailing `/api` unless you want it as the base).
+
+The frontend uses `withCredentials: true` on axios requests to allow cookie-based refresh tokens. When running locally, ensure the backend sets appropriate CORS and cookie options (`CLIENT_URL` / `VITE_API_BASE_URL`) so cookies are accepted by the browser.
+
+## Backend — Setup & run
+
+Prereqs: Node.js 18+, npm, MongoDB, SMTP credentials for email flows.
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Create `/backend/.env` with at least the following keys (do not commit secrets):
 
 - `MONGODB_URI` — MongoDB connection string
-- `PORT` — backend port (e.g. 4000)
+- `PORT` — backend port (e.g. `4000`)
 - `JWT_SECRET` — secret for access tokens
 - `REFRESH_TOKEN_SECRET` — secret for refresh tokens
-- `ACCESS_TOKEN_EXPIRY` — access token lifetime (e.g. `15m`)
-- `REFRESH_TOKEN_EXPIRY` — refresh token lifetime (database rotation still applies)
-- `GOOGLE_CLIENT_ID` — Google OAuth client ID (verify ID tokens server-side)
-- `EMAIL_SMTP_HOST` / `EMAIL_SMTP_PORT` — SMTP settings
-- `EMAIL_USER` / `EMAIL_PASS` — SMTP credentials
-- `CLIENT_URL` — frontend origin for email links (verification/reset)
-- `COOKIE_DOMAIN` — (optional) domain for refresh cookie
+- `ACCESS_TOKEN_EXPIRY` — e.g. `15m`
+- `REFRESH_TOKEN_EXPIRY` — e.g. `7d`
+- `GOOGLE_CLIENT_ID` — for Google ID-token verification
+- `EMAIL_SMTP_HOST`, `EMAIL_SMTP_PORT`, `EMAIL_USER`, `EMAIL_PASS` — SMTP config
+- `CLIENT_URL` — frontend origin used in email links (e.g. `http://localhost:5173`)
+- `COOKIE_DOMAIN` — optional cookie domain
 - `NODE_ENV` — `development` or `production`
 
-## Security notes (what makes this strong)
+## API overview (auth)
 
-- Refresh tokens are stored and rotated in the database, preventing reuse of a stolen token.
-- Refresh cookies are `HttpOnly` (and should be `Secure` in production) to mitigate XSS.
-- Rate limiting protects login and recovery endpoints from brute-force attempts.
-- Google ID tokens are verified server-side using `google-auth-library` to prevent token spoofing.
-- Helmet for secure HTTP headers
-- CORS configured with credentials support for cookie-based auth 
+Primary endpoints (see `/backend/src/routes/auth.routes.js`):
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/google`
+- `POST /api/auth/refresh-token`
+- `POST /api/auth/logout`
+- `GET /api/auth/verify-email`
+- `POST /api/auth/resend-verification`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `GET /api/auth/profile` (protected)
+
+Rate limiting is applied to sensitive endpoints (login, password recovery, verification).
+
+## Security notes
+
+- Refresh tokens are rotated and stored server-side to reduce risk of token reuse.
+- Refresh cookies are `HttpOnly` and must be `Secure` in production deployments.
+- Server-side verification of Google ID tokens prevents client-side spoofing.
+
+## Development tips
+
+- Run backend on `http://localhost:3000` and frontend on Vite default (e.g. `http://localhost:5173`).
+- Ensure `VITE_API_BASE_URL` matches the backend origin used by the browser.
+- Use the `AuthContext` and provided `ProtectedRoute`/`PublicRoute` to manage route access in the frontend.
+
+## 🚀 Deployment
+
+- Frontend is built using Vite and served via Express backend
+- Single server deployment (Render)
+- SPA routing handled using Express fallback middleware
+- Secure cookies configured for cross-origin authentication
+
+
+## 💼 What this project demonstrates
+
+- Building production-ready authentication systems
+- Secure token handling (JWT + Refresh Tokens)
+- Full-stack integration (React + Express)
+- Debugging real-world deployment issues (CSP, OAuth, routing)
+- Writing reusable and scalable backend modules
 
 ## Future improvements
 
-- Add integration tests for auth flows and token rotation
-- Harden cookie settings for multi-domain deployments
-- Implement device/session management UI (revoke tokens per device)
-- Add OAuth for other providers (GitHub, LinkedIn)
-- Move email templates and queueing to a worker for scale
-
-## Quick notes for reviewers
-
-- Backend dev script: `npm run dev` (uses `nodemon server.js`) — see `/backend/package.json`.
-- Frontend scaffold uses Vite — start with `npm run dev` in `/frontend`.
-- Auth routes and middleware are implemented under `/backend/src` and demonstrate secure patterns appropriate for production-ready systems.
-
-## Why this project?
-This project focuses on building a secure and scalable authentication system using real-world practices such as token rotation,seacure cookies and rate limiting. goinng beyond basic JWT implementation.
+- Add integration and E2E tests for core auth flows.
+- Improve cookie settings and multi-domain deployment support.
+- Add device/session management UI to allow revoking refresh tokens per device.
 
 ---
 
