@@ -39,12 +39,12 @@ const Register = () => {
     }
   }
   return (
-    <div className="auth-layout-container h-screen w-screen  flex justify-center items-center bg-linear-to-br from-purple-400/50 via-orange-300/20 to- to-60%  ">
+    <div className="auth-layout-container min-h-[100dvh] flex items-center justify-center px-4 bg-linear-to-br from-purple-400/50 via-orange-300/20 to-60%">
       {/*  */}
 
-      <div className="login-form-container shadow-xl w-full max-w-80 md:max-w-100 m-4 p-2 rounded-2xl grid place-content-center place-items-center leading-6 backdrop-blur-3xl ">
+      <div className="register-form-container shadow-xl w-full max-w-md p-6 rounded-2xl flex flex-col items-center backdrop-blur-3xl bg-white/30">
         {/*  */}
-        <h1 className="text-2xl md:text-4xl font-thin p-5 ">
+        <h1 className="text-2xl md:text-3xl font-light py-4">
           Create your account
         </h1>
 
@@ -54,7 +54,7 @@ const Register = () => {
           shape="pill"
           size="large"
           text="signup_with"
-          width={100}
+          width="100%"
           onSuccess={async (response) => {
             try {
               setSubmitting(true);
@@ -72,8 +72,8 @@ const Register = () => {
               setIsAuthenticated(true);
               navigate("/profile");
             } catch (error) {
-              setError({ message: error.res.data.message });
-              console.log(error.response?.data || error.message); // ✅ HERE
+              setError({ message: error.res.data.message || error.message });
+
             } finally {
               setSubmitting(false);
             }
@@ -84,7 +84,7 @@ const Register = () => {
         />
         {/*  */}
 
-        <p className="text-md text-gray-400 font-thinp p-2">or</p>
+        <p className="text-md text-gray-400 font-thin p-2">or</p>
 
         {/*  */}
 

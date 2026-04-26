@@ -31,12 +31,12 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="auth-layout-container h-screen w-screen  flex justify-center items-center bg-linear-to-br from-purple-400/50 via-orange-300/20 to- to-60%  ">
+    <div className="auth-layout-container min-h-[100dvh] flex items-center justify-center px-4 bg-linear-to-br from-purple-400/50 via-orange-300/20 to-60%">
       {/*  */}
-      <div className="login-form-container shadow-xl w-full max-w-80 md:max-w-100 m-4 p-4 rounded-2xl grid place-content-center place-items-center leading-6 backdrop-blur-3xl ">
+      <div className="forgot-form-container shadow-xl w-full max-w-md p-6 rounded-2xl flex flex-col items-center backdrop-blur-3xl bg-white/30 ">
         {/*  */}
 
-        <h1 className="text-2xl md:text-4xl font-thin p-5 ">
+        <h1 className="text-2xl md:text-3xl font-light py-4">
           Reset your password
         </h1>
 

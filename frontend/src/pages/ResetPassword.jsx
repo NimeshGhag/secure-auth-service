@@ -39,11 +39,11 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="auth-layout-container h-screen w-screen  flex justify-center items-center bg-linear-to-br from-purple-400/50 via-orange-300/20 to- to-60%  ">
-      <div className="login-form-container shadow-xl w-full max-w-80 md:max-w-100 m-4 p-4 rounded-2xl grid place-content-center place-items-center leading-6 backdrop-blur-3xl ">
+    <div className="aauth-layout-container min-h-[100dvh] flex items-center justify-center px-4 bg-linear-to-br from-purple-400/50 via-orange-300/20 to-60%">
+      <div className="ogin-form-container shadow-xl w-full max-w-md p-6 rounded-2xl flex flex-col items-center backdrop-blur-3xl bg-white/30 ">
         {/*  */}
 
-        <h1 className="text-2xl md:text-4xl font-thin p-5 ">Update password</h1>
+        <h1 className="text-2xl md:text-3xl font-light py-4">Update password</h1>
 
         <p className="text-md md:text-xl text-center  text-gray-700  font-thin p-5 ">
           New password shouldn't match old password
